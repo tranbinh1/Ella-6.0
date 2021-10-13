@@ -30,9 +30,9 @@
     {%- if section.blocks.size > 0 -%}
         <div class="footer__content-top{% if section.settings.show_footer_top_bg_img %} footer__content-bg{% endif %}">
             <div class="container">
-                <div class="halo-row column-4">
+                <div class="halo-row column-{{section.blocks.size}}">
                     {% for block in section.blocks %}
-                        <div class="footer-block__item footer-block__column footer-block__{{ block.type }} text-{{ text_align }}">
+                        <div class="footer-block__item footer-block__column footer-block__{{ block.type }} text-{{ text_align }}" style="--block-custom-width: {{block.settings.custom_width}}%">
                             <div class="{%- if block.type == 'link_list' -%}footer-block__mobile{%- endif -%}">
                                 {%- if block.settings.heading != blank -%}
                                     <h2 class="footer-block__heading" data-toggle-column-footer>
@@ -54,9 +54,18 @@
                                         </div>
                                     {%- endif -%}
                                 {%- elsif block.type == 'text' -%}
-                                    {%- if block.settings.subtext != blank -%}
-                                    <div class="footer-block__details rte">
-                                        {{ block.settings.subtext }}
+                                    {%- if block.settings.subtext != blank or block.settings.logo != blank -%}
+                                    <div class="footer-block__details">
+                                        {%- if block.settings.logo != blank -%}
+                                        <div class="image_logo">
+                                            <img data-srcset="{{ block.settings.logo | img_url: '200x' }}" class="lazyload" />
+                                        </div>
+                                        {%- endif -%}
+                                        {%- if block.settings.subtext != blank -%}
+                                        <div class="rte">
+                                            {{ block.settings.subtext }}
+                                        </div>
+                                        {%- endif -%}
                                     </div>
                                     {%- endif -%}
                                 {%- else -%}
@@ -304,12 +313,19 @@
 {% schema %}
 {
     "name": "t:sections.footer.name",
-    "max_blocks": 4,
+    "max_blocks": 5,
     "blocks": [
     {
         "type": "link_list",
         "name": "t:sections.footer.blocks.link_list.name",
         "settings": [
+            {
+                "type": "text",
+                "id": "custom_width",
+                "label": "t:sections.layout.block.custom_width.label",
+                "info": "t:sections.layout.block.custom_width.info",
+                "default": "20"
+            },
             {
                 "id": "heading",
                 "type": "text",
@@ -322,19 +338,32 @@
                 "type": "link_list",
                 "default": "footer",
                 "label": "t:sections.footer.blocks.link_list.settings.menu.label",
-                "info": "t:sections.footer.blocks.link_list.settings.menu.info"
+                "info": "t:sections.footer.blocks.link_list.settings.menu.info" 
             }
         ]
     },
     {
         "type": "text",
         "name": "t:sections.footer.blocks.text.name",
+        "limit": 1,
         "settings": [
             {
-                 "id": "heading",
+                "type": "text",
+                "id": "custom_width",
+                "label": "t:sections.layout.block.custom_width.label",
+                "info": "t:sections.layout.block.custom_width.info",
+                "default": "30"
+            },
+            {
+                "id": "heading",
                 "type": "text",
                 "default": "Heading",
                 "label": "t:sections.footer.blocks.text.settings.heading.label"
+            },
+            {
+                 "id": "logo",
+                "type": "image_picker",
+                "label": "t:sections.footer.blocks.text.settings.logo"
             },
             {
                 "id": "subtext",
@@ -349,6 +378,13 @@
         "name": "t:sections.footer.blocks.newsletter.name",
         "limit": 1,
         "settings": [
+            {
+                "type": "text",
+                "id": "custom_width",
+                "label": "t:sections.layout.block.custom_width.label",
+                "info": "t:sections.layout.block.custom_width.info",
+                "default": "40"
+            },
             {
                  "id": "heading",
                 "type": "text",
@@ -623,7 +659,35 @@
         {
             "value": "4",
             "label": "t:sections.footer.settings.social_media_link.social_position.option4"
+        },
+        {
+            "value": "5",
+            "label": "5"
         }]
+    },
+    {
+        "id": "social_color",
+        "type": "color",
+        "label": "t:sections.footer.settings.social_media_link.social_color",
+        "default": "#282828"
+    },
+    {
+        "id": "social_border_color",
+        "type": "color",
+        "label": "t:sections.footer.settings.social_media_link.social_border_color",
+        "default": "#fff"
+    },
+    {
+        "id": "social_background_color",
+        "type": "color",
+        "label": "t:sections.footer.settings.social_media_link.social_background_color",
+        "default": "#fff"
+    },
+    {
+        "id": "social_hover_color",
+        "type": "color",
+        "label": "t:sections.footer.settings.social_media_link.social_hover_color",
+        "default": "#fff"
     },
     {
         "type": "header",
