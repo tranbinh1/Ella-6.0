@@ -1,0 +1,101 @@
+<div class="announcement-bar" role="region" aria-label="{{ 'sections.header.announcement' | t }}" style="opacity: 0">
+    <div class="container">
+        <div class="row" data-announcement-bar>
+            {%- for block in section.blocks -%}
+                {%- case block.type -%}
+                    {%- when 'announcement' -%}
+                        {%- if block.settings.text != blank -%}
+                            <div class="announcement-bar__message text-center">
+                                {{ block.settings.text }}
+                            </div>
+                        {%- endif -%}
+                {%- endcase -%}
+            {%- endfor -%}
+        </div>
+        {% if section.settings.enable_close %}
+            <a href="#" class="announcement-close clearfix" data-close-announcement alt="{{ 'general.common.close' | t }}">
+                {% render 'icon-close' %}
+                {{ 'general.common.close' | t }}
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<style type="text/css">
+    .announcement-bar {
+        background-color: {{ section.settings.bg_color_text }};
+    }
+
+    .announcement-bar__message .message, .announcement-bar__message .message a, .announcement-bar__message p {
+        color: {{ section.settings.color_text }};
+        font-size: {{ section.settings.font_size_text }};
+        {% unless section.settings.enable_close %}
+            letter-spacing: 0;
+        {% endunless %}
+    }
+
+    .announcement-bar .announcement-close svg {
+        fill: {{ section.settings.color_text }};
+    }
+</style>
+
+
+{% schema %}
+{
+    "name": "t:sections.announcement-bar.name",
+    "max_blocks": 12,
+    "settings": [
+        {
+            "type": "header",
+            "content": "t:sections.announcement-bar.blocks.announcement.settings.text.title"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_close",
+            "label": "t:sections.announcement-bar.blocks.announcement.settings.text.enable_close",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "font_size_text",
+            "label": "t:sections.announcement-bar.blocks.announcement.settings.text.font_size",
+            "default": "12px"
+        },
+        {
+            "type": "color",
+            "id": "bg_color_text",
+            "label": "t:sections.announcement-bar.blocks.announcement.settings.color_scheme.bg_color_text",
+            "default": "#ffe8e8"
+        },
+        {
+            "type": "color",
+            "id": "color_text",
+            "label": "t:sections.announcement-bar.blocks.announcement.settings.color_scheme.color_text",
+            "default": "#b05d5d"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "announcement",
+            "name": "t:sections.announcement-bar.blocks.announcement.name",
+            "settings": [
+                {
+                    "type": "html",
+                    "id": "text",
+                    "label": "t:sections.announcement-bar.blocks.announcement.settings.text.label",
+                    "default": "<p>Welcome to our store</p>"
+                }
+            ]
+        }
+    ],
+    "default": {
+        "blocks": [
+            {
+                "type": "announcement"
+            }
+        ]
+    }
+}
+{% endschema %}
+
+

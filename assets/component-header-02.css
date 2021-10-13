@@ -1,0 +1,101 @@
+#shopify-section-header-02{
+	position: relative;
+    z-index: 3;
+    will-change: transform;
+}
+
+.header-02 .header-bottom .header__logo{
+	padding-bottom: 0;
+	padding-right: 15px;
+    width: 140px;
+}
+
+.header-bottom-right{
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.header-bottom-right .header__icon+.header__icon{
+	margin-left: 28px;
+}
+
+.header-bottom-right .icon-hamburger{
+	position: relative;
+	top: 3px;
+}
+
+.cart-count-bubble{
+	top: -9px;
+    right: -11px;
+    font-size: calc(var(--font-body-size) - 2px);
+    line-height: 20px;
+}
+
+.header-bottom-right .header__icon--cart svg{
+	position: relative;
+	top: -1px;
+}
+
+.header-bottom-right .header__icon--search svg{
+	width: 26px;
+	height: 26px;
+}
+
+.header-bottom-right .header__icon--account svg{
+	padding: 1px;
+}
+
+.icon-hamburger{
+	border: none;
+    outline: 0;
+    padding: 0;
+    display: block;
+    width: 24px;
+    height: 24px;
+    position: relative;
+}
+
+.icon-hamburger .icon-line{
+	display: block;
+    width: 24px;
+    height: 2px;
+    margin: 3px 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: #000;
+}
+
+.icon-hamburger .icon-line:after, .icon-hamburger .icon-line:before{
+	background-color: #000;
+    display: block;
+    width: 24px;
+    height: 2px;
+    margin: 3px 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    content: "";
+    transition: transform .3s;
+    transition-delay: .2s;
+}
+
+.icon-hamburger .icon-line:before {
+    top: 5px;
+}
+
+.icon-hamburger .icon-line:after {
+    top: 12px;
+}
+
+@media (min-width: 1025px){
+	.header-02 .header-bottom{
+	    display: flex;
+	    justify-content: space-between !important;
+	 	align-items: center !important;
+	 	padding-top: 17px;
+    	padding-bottom: 16px;
+	}
+}

@@ -1,0 +1,435 @@
+{%- liquid
+    assign container = section.settings.container
+    assign collection = section.settings.product_block_collection
+    assign limit = section.settings.product_block_limit
+    assign layout = section.settings.product_block_layout
+    assign infinite_scroll = section.settings.product_block_infinite_scroll
+
+    assign block_title = section.settings.product_block_title
+    assign block_title_align = section.settings.title_align
+    assign image_ratio = settings.product_block_image_ratio
+    assign swipe_on_mobile = section.settings.product_block_swipe_on_mobile
+
+    assign products_to_display = 0
+    if collections[collection].handle != ''
+        if collections[collection].all_products_count > limit
+            assign products_to_display = limit
+        else
+            assign products_to_display = collections[collection].all_products_count
+        endif 
+    else
+        assign products_to_display = limit
+    endif
+
+    assign swipe = false
+    if swipe_on_mobile == true and layout == 'grid' and products_to_display > 2
+        assign swipe = true
+    endif
+-%}
+<div class="product-block section-block-{{section.id}}">
+    <{% if swipe %}product-slider-component{% else %}div{% endif %} class="halo-block halo-product-block" id="halo-product-block-{{ section.id }}" data-product-block data-limit="{{ limit }}" data-layout="{{ layout }}" sectionId="{{ section.id }}"
+        {% if collection != blank %}
+            data-collection="{{ collection }}"
+            data-image-ratio="{{ image_ratio }}"
+            data-swipe="{{ swipe }}"
+        {% endif %}
+    >
+        <div class="{% if section.settings.container == 'container' %}container{% endif %}">
+            {%- if block_title != blank -%}
+                <div class="halo-block-header text-{{ block_title_align }}">
+                    <h3 class="title">
+                        <span class="text">{{ block_title | escape }}</span>
+                    </h3>
+                    {% if section.settings.view_all != blank %}
+                    <a class="view_all" href="{{ section.settings.link_view_all }}" title="{{section.settings.view_all}}">
+                        {{ section.settings.view_all }}
+                    </a>
+                    {% endif %}
+                </div>
+            {%- endif -%}
+            <div class="halo-block-content">
+                {%- if layout== 'grid' -%}
+                    {%- liquid
+                        assign product_limit = 0
+                        assign column = section.settings.product_block_per_row
+                        if infinite_scroll
+                            assign product_limit = limit
+                        endif
+                    -%}
+                    <div class="products-grid column-{{ column }}{% if swipe %} slider slider--tablet grid grid--peek{% endif %}" data-products-to-show="{{ limit }}">
+                {%- elsif layout == 'slider' -%}
+                    {%- liquid
+                        assign column = section.settings.product_block_show
+                        assign dots = section.settings.product_block_dots
+                        assign arrows = section.settings.product_block_arrows
+                    -%}
+                    <div class="products-carousel column-{{ column }}"
+                        data-item-to-show="{{ column }}"
+                        data-item-dots="{{ dots }}"
+                        data-item-arrows="{{ arrows }}"
+                    >
+                {%- endif -%}
+                    {%- for product in collections[collection].products limit: limit -%}
+                        <div class="product{% if swipe %} slider__slide grid__item{% endif %}">
+                            {% render 'product-card-loading',
+                                product_card_product: product,
+                                media_size: image_ratio,
+                                portrait_aspect_ratio: '133'
+                            %}
+                        </div>
+                    {%- else -%}
+                        {%- for product in (1..limit) -%}
+                            <div class="product{% if swipe %} slider__slide grid__item{% endif %}">
+                                {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                                {% render 'product-card-placeholder',
+                                    index: current
+                                %}
+                            </div>
+                        {%- endfor -%}
+                    {%- endfor -%}
+                </div>
+                {%- if swipe -%}
+                    <div class="slider-buttons no-js-hidden{% if products_to_display < 4 %} medium-hide{% endif %}{% if products_to_display < 3 %} small-hide{% endif %}">
+                        <div class="slider-counter">
+                            <span class="slider-counter--current">1</span>
+                            <span aria-hidden="true"> / </span>
+                            <span class="visually-hidden">{{ 'accessibility.of' | t }}</span>
+                            <span class="slider-counter--total">{{ products_to_display }}</span>
+                        </div>
+                        <div class="slider-action">
+                            <button type="button" class="slider-button slider-button--prev" name="previous" aria-label="{{ 'accessibility.previous_slide' | t }}">
+                                {% render 'icon-caret' %}
+                            </button>
+                            <button type="button" class="slider-button slider-button--next" name="next" aria-label="{{ 'accessibility.next_slide' | t }}">
+                                {% render 'icon-caret' %}
+                            </button>
+                        </div>
+                    </div>
+                {%- endif -%}
+                {%- if infinite_scroll and collections[collection].handle != '' and layout == 'grid' -%}
+                    {%- assign product_total = collections[collection].all_products_count -%}
+                    {%- if product_total > product_limit -%}
+                        <div class="product-infinite-scroll text-center {% if swipe %}hidden-mobile{% endif %}" data-product-infinite>
+                            <a class="button button--secondary"
+                                data-collection="{{ collection.handle }}"
+                                data-limit="{{ product_limit }}"
+                                data-swipe="{{ swipe }}"
+                                data-page="2"
+                                data-total="{{ product_total }}"
+                                data-image-ratio="{{ image_ratio }}"
+                                href="#"
+                                sectionId="{{ section.id }}"
+                                {% if product_total <= product_limit %}
+                                    disabled="disabled"
+                                {% endif %}
+                            >
+                                {{ 'general.button_load_more.default' | t }}
+                                <div class="spinner_load" style="">
+                                    <div class="bounce1"></div>
+                                    <div class="bounce2"></div>
+                                    <div class="bounce3"></div>
+                                </div>
+                            </a>
+                        </div>
+                    {%- endif -%}
+                {%- endif -%}
+            </div>
+        </div>
+    </{% if swipe %}product-slider-component{% else %}div{% endif %}>
+</div>
+<style>
+
+    {%- liquid
+        assign color_title = section.settings.color_title
+        assign fontsize_title = section.settings.fontsize_title
+
+        assign mg_top_desktop = section.settings.mg_top_desktop
+        assign mg_top_tablet = section.settings.mg_top_tablet
+        assign mg_top_mobile = section.settings.mg_top_mobile
+
+        assign mg_bottom_desktop = section.settings.mg_bottom_desktop
+        assign mg_bottom_tablet = section.settings.mg_bottom_tablet
+        assign mg_bottom_mobile = section.settings.mg_bottom_mobile
+    -%}
+
+    .section-block-{{section.id}} .halo-block-header .title {
+        color: {{ color_title }};
+        font-size: {{ fontsize_title | append: 'px'  }};
+    }
+
+    .section-block-{{section.id}} .halo-block-header .title:before {
+        background-color: {{ color_title }};
+    }
+
+    @media (min-width: 1200px) {
+        .section-block-{{section.id}} {
+            padding-top: {{ mg_top_desktop | append: 'px' }};
+            padding-bottom: {{ mg_bottom_desktop | append: 'px' }};
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+        .section-block-{{section.id}} {
+            padding-top: {{ mg_top_tablet | append: 'px' }};
+            padding-bottom: {{ mg_bottom_tablet | append: 'px' }};
+        }
+    }
+
+    @media (max-width: 767px) {
+        .section-block-{{section.id}} {
+            padding-top: {{ mg_top_mobile | append: 'px' }};
+            padding-bottom: {{ mg_bottom_mobile | append: 'px' }};
+        }
+    }
+</style>
+
+{% schema %}
+{
+    "name": "t:sections.product_block.name",
+    "class": "halo-product-block-sections",
+    "settings": [
+        {
+            "type": "header",
+            "content": "t:sections.layout.content"
+        },
+        {
+            "type": "select",
+            "id": "container",
+            "label": "t:sections.layout.container.option",
+            "default": "container",
+            "options": [
+            {
+                "value": "container",
+                "label": "t:sections.layout.container.option1"
+            },
+            {
+                "value": "fullwidth",
+                "label": "t:sections.layout.container.option2"
+            }]
+        },
+        {
+            "type": "header",
+            "content": "t:sections.layout.margin_top"
+        },
+        {
+            "type": "range",
+            "id": "mg_top_desktop",
+            "label": "t:sections.layout.mg_desktop.label",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "t:sections.layout.mg_desktop.unit",
+            "default": 50
+        },
+        {
+            "type": "range",
+            "id": "mg_top_tablet",
+            "label": "t:sections.layout.mg_tablet.label",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "t:sections.layout.mg_desktop.unit",
+            "default": 50
+        },
+        {
+            "type": "range",
+            "id": "mg_top_mobile",
+            "label": "t:sections.layout.mg_mobile.label",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "t:sections.layout.mg_desktop.unit",
+            "default": 50
+        },
+        {
+            "type": "header",
+            "content": "t:sections.layout.margin_bottom"
+        },
+        {
+            "type": "range",
+            "id": "mg_bottom_desktop",
+            "label": "t:sections.layout.mg_desktop.label",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "t:sections.layout.mg_desktop.unit",
+            "default": 50
+        },
+        {
+            "type": "range",
+            "id": "mg_bottom_tablet",
+            "label": "t:sections.layout.mg_tablet.label",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "t:sections.layout.mg_desktop.unit",
+            "default": 50
+        },
+        {
+            "type": "range",
+            "id": "mg_bottom_mobile",
+            "label": "t:sections.layout.mg_mobile.label",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "t:sections.layout.mg_desktop.unit",
+            "default": 50
+        },
+        {
+            "type": "select",
+            "id": "product_block_layout",
+            "label": "t:sections.product_block.settings.product_block_layout.option",
+            "options": [
+            {
+                "value": "grid",
+                "label": "t:sections.product_block.settings.product_block_layout.option1"
+            },
+            {
+                "value": "slider",
+                "label": "t:sections.product_block.settings.product_block_layout.option2"
+            }],
+            "default": "grid"
+        },
+        {
+            "type": "text",
+            "id": "product_block_title",
+            "label": "t:sections.product_block.settings.product_block_title",
+            "default": "Trending Now"
+        },
+        {
+            "type": "range",
+            "id": "fontsize_title",
+            "label": "t:sections.layout.fontsize.fontsize_title.label",
+            "min": 10,
+            "max": 50,
+            "step": 1,
+            "unit": "t:sections.layout.fontsize.fontsize_title.unit",
+            "default": 16
+        },
+        {
+            "type" : "color",
+            "id" : "color_title",
+            "label": "t:sections.layout.color.color_title",
+            "default" : "#232323"
+        },
+        {
+            "type": "text",
+            "id": "view_all",
+            "label": "t:sections.product_block.settings.view_all"
+        },
+        {
+            "type": "url",
+            "id": "link_view_all",
+            "label": "t:sections.product_block.settings.link_view_all"
+        },
+        {
+            "type": "select",
+            "id": "title_align",
+            "label": "t:sections.product_block.settings.general.label__7",
+            "options": [
+            {
+                "value": "left",
+                "label": "t:sections.product_block.settings.general.options__7"
+            },
+            {
+                "value": "center",
+                "label": "t:sections.product_block.settings.general.options__8"
+            },
+            {
+                "value": "right",
+                "label": "t:sections.product_block.settings.general.options__9"
+            }],
+            "default": "center"
+        },
+        {
+            "type": "collection",
+            "id": "product_block_collection",
+            "label": "t:sections.product_block.settings.product_block_collection"
+        },
+        {
+            "type": "range",
+            "id": "product_block_limit",
+            "label": "t:sections.product_block.settings.product_block_limit",
+            "min": 3,
+            "max": 20,
+            "step": 1,
+            "default": 8
+        },
+        {
+            "type": "header",
+            "content": "t:sections.product_block.settings.grid.content"
+        },
+        {
+            "type": "select",
+            "id": "product_block_per_row",
+            "label": "t:sections.product_block.settings.grid.product_block_per_row",
+            "options": [
+            {
+                "value": "3",
+                "label": "3"
+            },
+            {
+                "value": "4",
+                "label": "4"
+            },
+            {
+                "value": "5",
+                "label": "5"
+            }],
+            "default": "4"
+        },
+        {
+            "type": "checkbox",
+            "id": "product_block_infinite_scroll",
+            "label": "t:sections.product_block.settings.grid.product_block_infinite_scroll",
+            "default": true
+        },
+        {
+            "id": "product_block_swipe_on_mobile",
+            "type": "checkbox",
+            "default": true,
+            "label": "t:sections.product_block.settings.grid.product_block_swipe_on_mobile"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.product_block.settings.slider.content"
+        },
+        {
+            "type": "checkbox",
+            "id": "product_block_dots",
+            "label": "t:sections.product_block.settings.slider.product_block_dots",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "product_block_arrows",
+            "label": "t:sections.product_block.settings.slider.product_block_arrows",
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "product_block_show",
+            "label": "t:sections.product_block.settings.grid.product_block_per_row",
+            "options": [
+            {
+                "value": "3",
+                "label": "3"
+            },
+            {
+                "value": "4",
+                "label": "4"
+            },
+            {
+                "value": "5",
+                "label": "5"
+            }],
+            "default": "5"
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.product_block.presets.name"
+        }
+    ]
+}
+{% endschema %}

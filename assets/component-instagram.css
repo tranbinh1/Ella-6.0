@@ -1,0 +1,52 @@
+.instagram-slide .halo-row {
+    margin-left: -2.5px;
+    margin-right: -2.5px;
+}
+
+.instagram-slide .halo-row .halo-item {
+    padding-right: 2.5px;
+    padding-left: 2.5px;
+    margin-bottom: 5px;
+}
+
+.instagram-slide .halo-block-header {
+    margin-bottom: 35px;
+}
+
+.instagram-slide .halo-block-header .title {
+    margin-bottom: 15px;
+}
+
+.instagram-slide .halo-block-header .title .text svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 14px;
+    position: relative;
+    top: -1px;
+}
+
+.instagram-slide .btn {
+    display: block;
+    max-width: 230px;
+    margin: 30px auto 0;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.instagram-slide .slick-arrow.slick-prev {
+    left: -12px;
+}
+
+.instagram-slide .slick-arrow.slick-next {
+    right: -12px;
+}
+
+@media (max-width: 551px){
+    .instagram-slide .slick-arrow.slick-next {
+        right: -8px;
+    }
+    .instagram-slide .slick-arrow.slick-prev {
+        left: -8px;
+    }
+}

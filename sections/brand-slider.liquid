@@ -1,0 +1,326 @@
+{% if section.blocks.size > 0 %}
+<div class="brand-slider section-block-{{section.id}}" id="brands-{{section.id}}" data-loader-script="{{ 'halo.slide-brand.js' | asset_url }}">
+    <div class="brands-block">
+        <div class="{%-if section.settings.container == 'container'-%}container{%-endif-%}">
+            {% if section.settings.brand_title != blank %}
+                <div class="halo-block-header text-{{ section.settings.title_align }}">   
+                    <h3 class="title">
+                        <span class="text">
+                        {{ section.settings.brand_title }}
+                        </span>
+                    </h3>
+                    {% if section.settings.brand_des != blank %}
+                    <div class="rte subtext-brand">
+                        {{ section.settings.brand_des }}
+                    </div>        
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div class="halo-row column-{{ section.settings.brand_rows }} brands-slider halo-slider sm-column-1 md-column-3" data-brands-slider data-rows="{{ section.settings.brand_rows }}">
+                {% for block in section.blocks %}
+                    <div class="halo-item">
+                        {% if block.settings.image != blank %}
+                            {%- assign preview_img = block.settings.image -%}
+                            <div class="wrapper-image" style="max-width: {{block.settings.image.width}}px; margin: 0 auto;">
+                                <a class="adaptive_height" title="{{ block.settings.title }}" href="{{ block.settings.link }}" style="padding-top: {{ 1 | divided_by: preview_img.aspect_ratio | times: 100 }}%;">
+                                    <img {% render 'lazyload',preview_img: preview_img  %} />
+                                    {% if settings.enable_lazyload %}<span class="data-lazy-loading"></span>{% endif %}
+                                </a>
+                            </div>
+                        {% else %}
+                            <a title="{{ block.settings.title }}" href="{{ block.settings.link }}">
+                                <div class="not_img" style="--height_not_img: 74px">186 x 74px</div>
+                            </a>
+                        {% endif %}
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    {%- liquid
+        assign brand_bg = section.settings.brand_bg
+
+        assign color_title = section.settings.color_title
+        assign fontsize_title = section.settings.fontsize_title
+
+        assign color_des = section.settings.color_des
+        assign fontsize_des = section.settings.fontsize_des
+
+        assign mg_top_desktop = section.settings.mg_top_desktop
+        assign mg_top_tablet = section.settings.mg_top_tablet
+        assign mg_top_mobile = section.settings.mg_top_mobile
+
+        assign mg_bottom_desktop = section.settings.mg_bottom_desktop
+        assign mg_bottom_tablet = section.settings.mg_bottom_tablet
+        assign mg_bottom_mobile = section.settings.mg_bottom_mobile
+    -%}
+
+    .section-block-{{section.id}} {
+        background-color: {{ brand_bg }};
+        {% if section.settings.display_brand_border %}
+            border-top: 1px solid #ebebeb;
+        {% endif %}
+    }
+
+    .section-block-{{section.id}} .halo-block-header .title .text {
+        background-color: {{ brand_bg }};
+    }
+
+    .section-block-{{section.id}} .halo-block-header .title {
+        color: {{ color_title }};
+        font-size: {{ fontsize_title | append: 'px'  }};
+    }
+
+    .section-block-{{section.id}} .halo-block-header .title:before {
+        /*background-color: {{ color_title }};*/
+        display: none;
+    }
+
+    .section-block-{{section.id}} .halo-block-header .rte {
+        color: {{ color_des }};
+        font-size: {{ fontsize_des | append: 'px'  }};
+    }
+
+    @media (min-width: 1200px) {
+        .section-block-{{section.id}} {
+            padding-top: {{ mg_top_desktop | append: 'px' }};
+            padding-bottom: {{ mg_bottom_desktop | append: 'px' }};
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+        .section-block-{{section.id}} {
+            padding-top: {{ mg_top_tablet | append: 'px' }};
+            padding-bottom: {{ mg_bottom_tablet | append: 'px' }};
+        }
+    }
+
+    @media (max-width: 767px) {
+        .section-block-{{section.id}} {
+            padding-top: {{ mg_top_mobile | append: 'px' }};
+            padding-bottom: {{ mg_bottom_mobile | append: 'px' }};
+        }
+    }
+</style>
+{% endif %}
+
+{% schema %}
+{
+    "name": "t:sections.brand.name",
+    "class": "sections-brand-slider",
+    "settings": [
+    {
+        "type": "header",
+        "content": "t:sections.layout.content"
+    },
+    {
+        "type": "select",
+        "id": "container",
+        "label": "t:sections.layout.container.option",
+        "default": "container",
+        "options": [
+        {
+            "value": "container",
+            "label": "t:sections.layout.container.option1"
+        },
+        {
+            "value": "fullwidth",
+            "label": "t:sections.layout.container.option2"
+        }]
+    },
+    {
+        "type": "header",
+        "content": "t:sections.layout.margin_top"
+    },
+    {
+        "type": "range",
+        "id": "mg_top_desktop",
+        "label": "t:sections.layout.mg_desktop.label",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "t:sections.layout.mg_desktop.unit",
+        "default": 50
+    },
+    {
+        "type": "range",
+        "id": "mg_top_tablet",
+        "label": "t:sections.layout.mg_tablet.label",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "t:sections.layout.mg_desktop.unit",
+        "default": 50
+    },
+    {
+        "type": "range",
+        "id": "mg_top_mobile",
+        "label": "t:sections.layout.mg_mobile.label",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "t:sections.layout.mg_desktop.unit",
+        "default": 50
+    },
+    {
+        "type": "header",
+        "content": "t:sections.layout.margin_bottom"
+    },
+    {
+        "type": "range",
+        "id": "mg_bottom_desktop",
+        "label": "t:sections.layout.mg_desktop.label",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "t:sections.layout.mg_desktop.unit",
+        "default": 50
+    },
+    {
+        "type": "range",
+        "id": "mg_bottom_tablet",
+        "label": "t:sections.layout.mg_tablet.label",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "t:sections.layout.mg_desktop.unit",
+        "default": 50
+    },
+    {
+        "type": "range",
+        "id": "mg_bottom_mobile",
+        "label": "t:sections.layout.mg_mobile.label",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "t:sections.layout.mg_desktop.unit",
+        "default": 50
+    },
+    {
+        "type": "checkbox",
+        "id": "display_brand_border",
+        "label": "t:sections.brand.settings.display_brand_border",
+        "default": true
+    },
+    {
+        "type" : "color",
+        "id" : "brand_bg",
+        "label" : "t:sections.brand.settings.brand_bg",
+        "default" : "#f5f5f5"
+    },
+    {
+        "type": "text",
+        "id": "brand_title",
+        "label": "t:sections.brand.settings.brand_title"
+    },
+    {
+        "type" : "color",
+        "id" : "color_title",
+        "label": "t:sections.layout.color.color_title",
+        "default" : "#232323"
+    },
+    {
+        "type": "range",
+        "id": "fontsize_title",
+        "label": "t:sections.layout.fontsize.fontsize_title.label",
+        "min": 10,
+        "max": 50,
+        "step": 1,
+        "unit": "t:sections.layout.fontsize.fontsize_title.unit",
+        "default": 16
+    },
+    {
+        "type" : "textarea",
+        "id" : "brand_des",
+        "label" : "t:sections.brand.settings.brand_des"
+    },
+    {
+        "type" : "color",
+        "id" : "color_des",
+        "label": "t:sections.layout.color.color_des",
+        "default" : "#3c3c3c"
+    },
+    {
+        "type": "range",
+        "id": "fontsize_des",
+        "label": "t:sections.layout.fontsize.fontsize_des.label",
+        "min": 10,
+        "max": 50,
+        "step": 1,
+        "unit": "t:sections.layout.fontsize.fontsize_title.unit",
+        "default": 16
+    },
+    {
+        "type": "select",
+        "id": "title_align",
+        "label": "t:sections.product_block.settings.general.label__7",
+        "options": [
+        {
+            "value": "left",
+            "label": "t:sections.product_block.settings.general.options__7"
+        },
+        {
+            "value": "center",
+            "label": "t:sections.product_block.settings.general.options__8"
+        },
+        {
+            "value": "right",
+            "label": "t:sections.product_block.settings.general.options__9"
+        }],
+        "default": "center"
+    },
+    {
+        "type": "select",
+        "id": "brand_rows",
+        "label": "t:sections.brand.settings.brand_rows.option",
+        "options": [
+            {
+                "value": "4",
+                "label": "t:sections.brand.settings.brand_rows.option1"
+            },
+            {
+                "value": "5",
+                "label": "t:sections.brand.settings.brand_rows.option2"
+            },
+            {
+                "value": "6",
+                "label": "t:sections.brand.settings.brand_rows.option3"
+            }
+        ],
+        "default": "5"
+    }],
+    "blocks": [
+        {
+            "type": "image",
+            "name": "t:sections.brand.blocks.image.name",
+            "settings": [
+            {
+                "type": "image_picker",
+                "id": "image",
+                "label": "t:sections.brand.blocks.image.name",
+                "info" : "t:sections.brand.blocks.image.info"
+            },
+            {
+                "type": "text",
+                "id": "title",
+                "label": "t:sections.brand.blocks.image.title",
+                "default": "Loremous"
+            },
+            {
+                "type": "url",
+                "id": "link",
+                "label": "t:sections.brand.blocks.image.link"
+            }]
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.brand.presets.name"
+        }
+    ]
+}
+{% endschema %}
